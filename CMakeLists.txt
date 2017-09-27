@@ -6,6 +6,8 @@ set(CMAKE_DISABLE_SOURCE_CHANGES ON)
 set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
 
 option(TESTS "Build test binaries" 0)
+set(WITH_SOURCE_TREE    "hierarchical" CACHE STRING "Build the source tree for IDE's.")
+set_property(CACHE WITH_SOURCE_TREE PROPERTY STRINGS no flat hierarchical hierarchical-folders)
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake-macros")
 include(GroupSources)
