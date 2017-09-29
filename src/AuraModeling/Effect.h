@@ -2,7 +2,7 @@
 
 #include "EffectConstants.h"
 
-class Character;
+class Unit;
 
 struct DollEffect
 {
@@ -17,6 +17,6 @@ struct DollEffect
     // ==== HOOKS ====
   
     // Called when effect is initially applied/removed
-    virtual void OnApply(Character* character) { }
-    virtual void OnRemove(Character* character) { }
+    virtual void OnApply(Unit* character) { }
+    virtual void OnRemove(Unit* character) { }
 };

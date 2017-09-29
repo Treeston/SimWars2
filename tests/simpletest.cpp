@@ -1,9 +1,9 @@
 #include <cstdio>
-#include "PaperDoll.h"
+#include "Unit.h"
 
-void summarize(Character const& c)
+void summarize(Unit const& c)
 {
-    printf("Character dump:\n");
+    printf("Unit dump:\n");
     for (uint8 i = 0; i < NUM_INTEGRAL_STATS; ++i)
         printf("%s: %u\n", GetStatName(Stats(i)), c.GetStat(Stats(i)));
     for (uint8 i = NUM_INTEGRAL_STATS; i < NUM_STATS; ++i)
@@ -25,8 +25,8 @@ int main()
     doll.SetBasicStat(STAT_HEALING_POWER, 0);
     doll.SetBasicStat(STAT_AGONY_RESISTANCE, 0);
 
-    Character c(nullptr, nullptr, &doll);
-    printf("We created a character at %p - its stats are:\n", &c);
+    Unit c(nullptr, &doll);
+    printf("We created a unit at %p - its stats are:\n", &c);
     summarize(c);
     printf("\n");
 

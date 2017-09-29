@@ -1,4 +1,4 @@
-#include "PaperDoll.h"
+#include "Unit.h"
 
 #include "Effect.h"
 #include "EffectMgr.h"
@@ -6,8 +6,8 @@
 
 #define ct_copy_init(d, ...) d(other.d), ct_copy_init(__VA_ARGS__)
 
-Character::Character(SimulationInstance const* instance, Character const& other)
-: _instance(instance), _profession(other._profession),
+Unit::Unit(SimulationInstance const* instance, Unit const& other)
+: _instance(instance),
   _baseStats(other._baseStats), _integralStats(other._integralStats), _fractionalStats(other._fractionalStats),
   _conditionDamage(other._conditionDamage), _conditionDuration(other._conditionDuration), _boonDuration(other._boonDuration)
 {
@@ -21,8 +21,8 @@ Character::Character(SimulationInstance const* instance, Character const& other)
     }
 }
 
-Character::Character(SimulationInstance const* instance, Profession const* profession, BasicDoll const* baseStats)
-: _instance(instance), _profession(profession), _baseStats(baseStats)
+Unit::Unit(SimulationInstance const* instance, BasicDoll const* baseStats)
+: _instance(instance), _baseStats(baseStats)
 {
     // initialize array members
     _integralStats.fill(0);
@@ -38,19 +38,19 @@ Character::Character(SimulationInstance const* instance, Profession const* profe
         ApplyStatBonus(Stats(i), baseStats->GetBasicStat(Stats(i)));
 }
 
-uint32 Character::GetStat(Stats stat) const
+uint32 Unit::GetStat(Stats stat) const
 {
     assert(stat < NUM_INTEGRAL_STATS);
     return _integralStats[stat];
 }
 
-double Character::GetFractionalStat(Stats stat) const
+double Unit::GetFractionalStat(Stats stat) const
 {
     assert(stat >= NUM_INTEGRAL_STATS && stat < NUM_STATS);
     return _fractionalStats[stat-NUM_INTEGRAL_STATS];
 }
 
-void Character::ApplyStatBonus(Stats stat, int32 value)
+void Unit::ApplyStatBonus(Stats stat, int32 value)
 {
     assert(stat < NUM_INTEGRAL_STATS);
     if (value < 0 && uint32(-value) > _integralStats[stat])
@@ -96,13 +96,13 @@ void Character::ApplyStatBonus(Stats stat, int32 value)
   }
 }
 
-void Character::ApplyStatBonus(Stats stat, double value)
+void Unit::ApplyStatBonus(Stats stat, double value)
 {
     assert(stat >= NUM_INTEGRAL_STATS && stat < NUM_STATS);
     _fractionalStats[stat-NUM_INTEGRAL_STATS] += value;
 }
 
-void Character::ApplyEffect(EffectID id)
+void Unit::ApplyEffect(EffectID id)
 {
     DollEffect* eff = sEffectManager.GetBaseEffect(id);
     if (DollEffect* copy = eff->Reinstance())
@@ -111,13 +111,13 @@ void Character::ApplyEffect(EffectID id)
         ApplyEffect(eff);
 }
 
-void Character::ApplyEffect(DollEffect* eff)
+void Unit::ApplyEffect(DollEffect* eff)
 {
     _effects.emplace(eff->GetID(), eff);
     eff->OnApply(this);
 }
 
-void Character::RemoveEffect(DollEffect* eff)
+void Unit::RemoveEffect(DollEffect* eff)
 {
     auto pair = _effects.equal_range(eff->GetID());
     for (auto it = pair.first; it != pair.second; ++it)
@@ -132,7 +132,7 @@ void Character::RemoveEffect(DollEffect* eff)
     sEffectManager.CleanupEffect(eff);
 }
 
-void Character::RemoveEffectByID(EffectID id)
+void Unit::RemoveEffectByID(EffectID id)
 {
     std::vector<DollEffect*> del;
     auto pair = _effects.equal_range(id);
